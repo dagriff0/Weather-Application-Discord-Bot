@@ -1,6 +1,7 @@
 import requests
+import asyncio
 import discord
-import time
+from datetime import datetime
 import schedule
 from discord.ext import commands, tasks
 
@@ -10,6 +11,9 @@ RAPID_URL = "https://weatherapi-com.p.rapidapi.com/current.json"
 RAPID_API_KEY = "48f568b40bmsh578205faacc6f62p1d11a0jsn109f2a5ba371"  # Replace this with your RapidAPI key
 RAPID_API_HOST = "weatherapi-com.p.rapidapi.com"
 CHANNEL_ID = 1187480788262977636
+
+#Global Variables
+city = "Clemson, SC"
 
 #Function fecthes the weather data from WeatherAPI.com api
 def get_weather(api_key, city):
@@ -25,7 +29,7 @@ def get_weather(api_key, city):
 #creates readable weather information based on selected cit
 def display_weather():
     api_key = RAPID_API_KEY
-    city = "Clemson, SC"
+    
     weather_data = get_weather(api_key, city)
 
     # Extract relevant information from the response
@@ -44,13 +48,29 @@ def display_weather():
 
 bot = commands.Bot(command_prefix = "w/", intents = discord.Intents.all())
 
-
+def hourly_update():
+    currTime = datetime.now()
+    formattedTime = currTime.strftime("%H:%M")
+    print(formattedTime)
+    
+async def check_hour():
+    await bot.wait_until_ready()
+    while not bot.is_closed():
+            currTime = datetime.now()
+            if currTime.minute == 0 and currTime.second == 0:
+                await hourly_update()
+            await asyncio.sleep(60)
+               
 @bot.event
 async def on_ready():
     print("WeatherBot is Ready")
     channel = bot.get_channel(CHANNEL_ID)
     await channel.send("Its time for the Weather with me weather boy!")
     await channel.send("Here is the current weather:\n" + display_weather())
+    
+    #Send weather upadate each hour
+    bot.loop.create_task(check_hour())
+    
     
 
 bot.run(BOT_TOKEN)
