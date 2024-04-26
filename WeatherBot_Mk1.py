@@ -14,7 +14,7 @@ CHANNEL_ID = 1187480788262977636
 
 #Global Variables
 city = "Clemson, SC"
-
+    
 #Function fecthes the weather data from WeatherAPI.com api
 def get_weather(api_key, city):
     querystring = {"q": city}
@@ -53,6 +53,7 @@ def hourly_update():
     formattedTime = currTime.strftime("%H:%M")
     print(formattedTime)
     
+    
 async def check_hour():
     await bot.wait_until_ready()
     while not bot.is_closed():
@@ -60,7 +61,9 @@ async def check_hour():
             if currTime.minute == 0 and currTime.second == 0:
                 await hourly_update()
             await asyncio.sleep(60)
-               
+
+#schedule.every().hour.do(hourly_update)
+
 @bot.event
 async def on_ready():
     print("WeatherBot is Ready")
@@ -70,6 +73,12 @@ async def on_ready():
     
     #Send weather upadate each hour
     bot.loop.create_task(check_hour())
+
+@bot.command()
+async def setcity(ctx, new_city: str):
+    global city
+    city = new_city
+    await ctx.channel.send(f"City is now set to {city}:\n" + display_weather())
     
     
 
