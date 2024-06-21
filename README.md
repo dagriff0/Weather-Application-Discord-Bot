@@ -4,3 +4,5 @@
  Commands:
     w/forecast
     w/setcity [city]
+
+Powered by WeatherAPI.com
