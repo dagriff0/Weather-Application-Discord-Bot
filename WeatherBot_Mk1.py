@@ -7,7 +7,7 @@ from discord.ext import commands, tasks
 
 BOT_TOKEN = "MTE4NzQ2MDc4Mjg3OTk0ODg3MQ.GrQr7o.Q7CQfc6r229dgVUd9mnqCKSiz3S0cLSDEqXGGk"
 
-
+#WEATHER ICONS
 #Use for sunny and clear
 SUNNY_ICON = ":sunny:"
 #Use for cloudy and overcast
@@ -23,7 +23,7 @@ SNOW_ICON = ":cloud_snow:"
 #Use for patchy rain
 PATCHY_ICON = ":white_sun_rain_cloud:"
 
-#Temperature Icons
+#TEMPERATURE ICONS
 SKULL = ":skull:"
 HOT_FACE = ':hot_face:'
 SWEAT_SMILE = ':sweat:'
@@ -149,10 +149,14 @@ def display_3d_forecast():
         forecast_message = f'{days}-Day Forecast for {city}:\n'
         for day in forecast_days:
             date = day['date']
+            # Convert date string to a datetime object
+            date_obj = datetime.strptime(date, '%Y-%m-%d')
+            # Get the day of the week
+            day_of_week = date_obj.strftime('%A')
             condition = day['day']['condition']['text']
             max_temp = day['day']['maxtemp_f']
             min_temp = day['day']['mintemp_f']
-            forecast_message += f'{date}:\n\t{add_Cicons(condition)}\n\tHigh: {add_Ticons(max_temp)}\n\tLow: {add_Ticons(min_temp)}\n'
+            forecast_message += f'{day_of_week}:\n\t{add_Cicons(condition)}\n\tHigh: {add_Ticons(max_temp)}\n\tLow: {add_Ticons(min_temp)}\n'
         
         return forecast_message
     else:
@@ -170,6 +174,14 @@ def schedule_weather_updates():
     schedule.every().hour.at(":00").do(lambda: asyncio.run_coroutine_threadsafe(send_weather_update(), bot.loop))
 
 #BOT COMMANDS/EVENTS
+#On Join
+@bot.event
+async def on_guild_join(guild):
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            await channel.send(f"Hello {guild.name}! Thank you for inviting me!")
+            break
+    await channel.send("To view my commands and Info please use the w/help command!")
 
 #On Ready
 @bot.event
@@ -181,6 +193,19 @@ async def on_ready():
     schedule_weather_updates()
     check_schedule.start()
 
+#Help Command
+@bot.command()
+async def botinfo(ctx):
+    info_message = ("""I am a Weather Bot here to keep you up to date on the current weather.
+                    I give hourly updates and can give you forecasts for the coming days.
+                    You can even change which city I am set to
+                    Here are my current available commands:
+                    \tw/help - displays bot information and commands
+                    \tw/now - displays the current weather
+                    \tw/forecast - displays a 3 day forecast
+                    \tw/setcity [city] - changes the current city and immediately displays the weather\n\n
+                    Powered by WeatherAPI.com and Developed by Davidillionaire Inc.""")
+    await ctx.channel.send(info_message)
 #Command for displaying current weather
 @bot.command()
 async def now(ctx):
