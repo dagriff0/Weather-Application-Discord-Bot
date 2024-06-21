@@ -1,11 +1,11 @@
 import requests
-#import asyncio
+import asyncio
 import discord
 from datetime import datetime
-#import schedule
-from discord.ext import commands # tasks
+import schedule
+from discord.ext import commands, tasks
 
-BOT_TOKEN = "bot token"
+BOT_TOKEN = "MTE4NzQ2MDc4Mjg3OTk0ODg3MQ.GrQr7o.Q7CQfc6r229dgVUd9mnqCKSiz3S0cLSDEqXGGk"
 
 
 #Use for sunny and clear
@@ -84,12 +84,14 @@ def display_current_weather():
     country = weather_data['location']['country']
     temperature = weather_data['current']['temp_f']
     condition = weather_data['current']['condition']['text']
+    feels_like = weather_data['current']['feelslike_f']
 
     # Display weather information
     loc_str = (f"Weather in {location}, {country}:\n")
     temp_str = (f"Temperature: {add_Ticons(temperature)}\n")
-    cond_str = (f"Condition: {add_Cicons(condition)}")
-    concat_str = loc_str + temp_str + cond_str
+    cond_str = (f"Condition: {add_Cicons(condition)}\n")
+    f_like_str = (f"Feels Like: {add_Ticons(feels_like)}\n")
+    concat_str = loc_str + temp_str + f_like_str + cond_str
     
     return concat_str
 #Icons for the current weather conditions
@@ -110,8 +112,8 @@ def add_Cicons(condition):
         condition += f' {CLOUDY_ICON}'
 
     cond_message = f'{condition}'
-    print(cond_message)
     return cond_message
+
 #Icons for temperature
 def add_Ticons(temp):
     float(temp)
@@ -150,13 +152,22 @@ def display_3d_forecast():
             condition = day['day']['condition']['text']
             max_temp = day['day']['maxtemp_f']
             min_temp = day['day']['mintemp_f']
-            print('before')
             forecast_message += f'{date}:\n\t{add_Cicons(condition)}\n\tHigh: {add_Ticons(max_temp)}\n\tLow: {add_Ticons(min_temp)}\n'
         
         return forecast_message
     else:
         return "Failed to fetch forecast data."
                         
+# Function to send weather updates to the channel
+async def send_weather_update():
+    channel = bot.get_channel(CHANNEL_ID)
+    current_hour = datetime.now().strftime("%-I %p")
+    weather_update = display_current_weather()
+    await channel.send(f"Here is your {current_hour} O'clock weather update:\n" + weather_update)
+
+# Schedule the weather update every hour
+def schedule_weather_updates():
+    schedule.every().hour.at(":00").do(lambda: asyncio.run_coroutine_threadsafe(send_weather_update(), bot.loop))
 
 #BOT COMMANDS/EVENTS
 
@@ -167,9 +178,8 @@ async def on_ready():
     channel = bot.get_channel(CHANNEL_ID)
     await channel.send("Its time for the Weather with me weather boy!")
     await channel.send("Here is the current weather:\n" + display_current_weather())
-    
-    #Send weather upadate each hour
-    #bot.loop.create_task(check_hour())
+    schedule_weather_updates()
+    check_schedule.start()
 
 #Command for displaying current weather
 @bot.command()
@@ -192,6 +202,10 @@ async def forecast(ctx):
     #else:
     await ctx.channel.send(f"Here is your {days} day forecast:\n" + display_3d_forecast())
 
+#checks the time every minute
+@tasks.loop(seconds=60)
+async def check_schedule():
+    schedule.run_pending()
         
     
 
