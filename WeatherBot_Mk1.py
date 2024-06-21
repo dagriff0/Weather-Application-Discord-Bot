@@ -5,8 +5,9 @@ from datetime import datetime
 #import schedule
 from discord.ext import commands # tasks
 
-#Constants
-BOT_TOKEN = "MTE4NzQ2MDc4Mjg3OTk0ODg3MQ.GrQr7o.Q7CQfc6r229dgVUd9mnqCKSiz3S0cLSDEqXGGk"
+BOT_TOKEN = "bot token"
+
+
 #Use for sunny and clear
 SUNNY_ICON = ":sunny:"
 #Use for cloudy and overcast
@@ -21,6 +22,8 @@ STORM_ICON = ":cloud_lighting:"
 SNOW_ICON = ":cloud_snow:"
 #Use for patchy rain
 PATCHY_ICON = ":white_sun_rain_cloud:"
+
+#Temperature Icons
 SKULL = ":skull:"
 HOT_FACE = ':hot_face:'
 SWEAT_SMILE = ':sweat:'
@@ -84,11 +87,12 @@ def display_current_weather():
 
     # Display weather information
     loc_str = (f"Weather in {location}, {country}:\n")
-    temp_str = (f"Temperature: {add_Ticons(temperature)}°F\n")
+    temp_str = (f"Temperature: {add_Ticons(temperature)}\n")
     cond_str = (f"Condition: {add_Cicons(condition)}")
     concat_str = loc_str + temp_str + cond_str
     
     return concat_str
+#Icons for the current weather conditions
 def add_Cicons(condition):
     if condition == "Sunny" or condition == "Clear":
         condition += f' {SUNNY_ICON}'
@@ -108,7 +112,7 @@ def add_Cicons(condition):
     cond_message = f'{condition}'
     print(cond_message)
     return cond_message
-
+#Icons for temperature
 def add_Ticons(temp):
     float(temp)
     if temp >= 110:
@@ -131,7 +135,7 @@ def add_Ticons(temp):
     temp_str = f'{temp}°F {icon}'
     return temp_str
 
-#function generates readable forecast data
+#function creates 3 day forecast message
 def display_3d_forecast():
     days = 3
     api_key = WEATHER_API_KEY
@@ -152,39 +156,25 @@ def display_3d_forecast():
         return forecast_message
     else:
         return "Failed to fetch forecast data."
-            
-            
-"""
-#Function for checking the time and triggering the hourly update
-async def check_hour():
-    await bot.wait_until_ready()
-    while not bot.is_closed():
-            currTime = datetime.now()
-            if currTime.minute == 0 and currTime.second == 0:
-                await hourly_update()
-            await asyncio.sleep(60)
-
-#Send the hourly update
-def hourly_update():
-    currTime = datetime.now()
-    formattedTime = currTime.strftime("%H:%M")
-    print(formattedTime)
-
-"""
+                        
 
 #BOT COMMANDS/EVENTS
 
-#schedule.every().hour.do(hourly_update)
-
+#On Ready
 @bot.event
 async def on_ready():
-    print("WeatherBot is Ready")
+    print("WeatherBot is Ready!")
     channel = bot.get_channel(CHANNEL_ID)
     await channel.send("Its time for the Weather with me weather boy!")
     await channel.send("Here is the current weather:\n" + display_current_weather())
     
     #Send weather upadate each hour
     #bot.loop.create_task(check_hour())
+
+#Command for displaying current weather
+@bot.command()
+async def now(ctx):
+    await ctx.channel.send("Here is the current weather:\n" + display_current_weather())
 
 #Command for changing the city
 @bot.command()
