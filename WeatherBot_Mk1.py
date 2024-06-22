@@ -5,7 +5,7 @@ from datetime import datetime
 import schedule
 from discord.ext import commands, tasks
 
-BOT_TOKEN = "MTE4NzQ2MDc4Mjg3OTk0ODg3MQ.GrQr7o.Q7CQfc6r229dgVUd9mnqCKSiz3S0cLSDEqXGGk"
+BOT_TOKEN = "MTI1NDA2NDgyOTg3OTE1Njc2OQ.GbsLZa.vLftxoyzgg4lPzHh-cbePCd7B6vUROZBuU7siA"
 
 #WEATHER ICONS
 #Use for sunny and clear
@@ -96,9 +96,12 @@ def display_current_weather():
     return concat_str
 #Icons for the current weather conditions
 def add_Cicons(condition):
+    
+    temp_lower = condition.lower()
+    
     if condition == "Sunny" or condition == "Clear":
         condition += f' {SUNNY_ICON}'
-    elif condition == "Partly Cloudy":
+    elif "partly cloudy" in temp_lower:
         condition += f' {PARTLY_ICON}'
     elif condition == "Light rain" or condition == "Moderate rain" or condition == "Heavy rain":
         condition += f' {RAIN_ICON}'
@@ -112,6 +115,7 @@ def add_Cicons(condition):
         condition += f' {CLOUDY_ICON}'
 
     cond_message = f'{condition}'
+    print(cond_message)
     return cond_message
 
 #Icons for temperature
@@ -181,31 +185,40 @@ async def on_guild_join(guild):
         if channel.permissions_for(guild.me).send_messages:
             await channel.send(f"Hello {guild.name}! Thank you for inviting me!")
             break
-    await channel.send("To view my commands and Info please use the w/help command!")
+    await channel.send("""Please set a default channel for me! You can do this by using the command "w/setchannel" in the channel you want.""")
 
 #On Ready
 @bot.event
 async def on_ready():
     print("WeatherBot is Ready!")
+    """
     channel = bot.get_channel(CHANNEL_ID)
-    await channel.send("Its time for the Weather with me weather boy!")
+    await channel.send("Its time for the Weather with me WeatherBot!")
     await channel.send("Here is the current weather:\n" + display_current_weather())
     schedule_weather_updates()
     check_schedule.start()
-
+    """
+    
 #Help Command
 @bot.command()
 async def botinfo(ctx):
-    info_message = ("""I am a Weather Bot here to keep you up to date on the current weather.
-                    I give hourly updates and can give you forecasts for the coming days.
-                    You can even change which city I am set to
-                    Here are my current available commands:
-                    \tw/help - displays bot information and commands
+    info_message = ("""I am a Weather Bot here to keep you up to date on the current weather. I give hourly updates and can give you forecasts for the coming days. You can even change which city I am set to.
+            Here are my current available commands:
+                    \tw/botinfo - displays bot information and commands
+                    \tw/setchannel - sets the default channel
                     \tw/now - displays the current weather
                     \tw/forecast - displays a 3 day forecast
-                    \tw/setcity [city] - changes the current city and immediately displays the weather\n\n
+                    \tw/setcity [city] - changes the current city and immediately displays the weather\n
                     Powered by WeatherAPI.com and Developed by Davidillionaire Inc.""")
     await ctx.channel.send(info_message)
+
+@bot.command()
+async def setchannel(ctx):
+    global CHANNEL_ID
+    CHANNEL_ID = ctx.channel
+    await ctx.channel.send("Awesome! From now on I will use this channel for Hourly updates and routine messages!")
+    await ctx.channel.send("To view my commands and Info please use the w/botinfo command!")
+    
 #Command for displaying current weather
 @bot.command()
 async def now(ctx):
