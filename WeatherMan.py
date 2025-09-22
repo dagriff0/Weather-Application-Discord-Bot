@@ -5,7 +5,7 @@ import requests
 #RAPID_API_HOST = "weatherapi-com.p.rapidapi.com"
 
 WEATHER_API_URL = "http://api.weatherapi.com/v1/current.json"
-WEATHER_API_KEY = "d5eebc64a2b045f997f122138242604"  # Replace this with your RapidAPI key
+WEATHER_API_KEY = "KEY GOES HERE"  # Replace this with your RapidAPI key
 
 def get_weather(api_key, city):
     try:
