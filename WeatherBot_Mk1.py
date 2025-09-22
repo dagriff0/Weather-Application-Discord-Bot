@@ -5,7 +5,7 @@ from datetime import datetime
 import schedule
 from discord.ext import commands, tasks
 
-BOT_TOKEN = "MTI1NDA2NDgyOTg3OTE1Njc2OQ.GbsLZa.vLftxoyzgg4lPzHh-cbePCd7B6vUROZBuU7siA"
+BOT_TOKEN = "TOKEN HERE"
 
 #WEATHER ICONS
 #Use for sunny and clear
@@ -37,7 +37,7 @@ ICE = ':ice_cube:'
 #APIs
 CURRENT_API_URL = "http://api.weatherapi.com/v1/current.json"
 FORECAST_API_URL = "http://api.weatherapi.com/v1/forecast.json"
-WEATHER_API_KEY = "d5eebc64a2b045f997f122138242604"  
+WEATHER_API_KEY = "KEY HERE"  
 
 CHANNEL_ID = 1187480788262977636
 
