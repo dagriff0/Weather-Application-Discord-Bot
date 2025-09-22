@@ -39,7 +39,7 @@ CURRENT_API_URL = "http://api.weatherapi.com/v1/current.json"
 FORECAST_API_URL = "http://api.weatherapi.com/v1/forecast.json"
 WEATHER_API_KEY = "KEY HERE"  
 
-CHANNEL_ID = 1187480788262977636
+CHANNEL_ID = [CHANNEL ID]
 
 #Global Variables
 city = "Clemson, SC"
