@@ -1,7 +1,7 @@
 import requests
 
 #RAPID_URL = "https://weatherapi-com.p.rapidapi.com/current.json"
-#RAPID_API_KEY = "48f568b40bmsh578205faacc6f62p1d11a0jsn109f2a5ba371"  # Replace this with your RapidAPI key
+#RAPID_API_KEY = "KEY"
 #RAPID_API_HOST = "weatherapi-com.p.rapidapi.com"
 
 WEATHER_API_URL = "http://api.weatherapi.com/v1/current.json"
